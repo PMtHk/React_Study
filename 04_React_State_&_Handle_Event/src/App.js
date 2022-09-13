@@ -30,6 +30,8 @@ function App() {
       ...expenseData
     }
     console.log(newExpense, "in app");
+    expenses.push(newExpense);
+    console.log(expenses);
   }
 
   return (
