@@ -19,9 +19,16 @@ function Expenses(props) {
           selected={filterYear}
           onChangeDropdown={filterChangeHandler}
         />
-        {props.items.map((elem) => (
-          <ExpenseItem  key={elem.id} title={elem.title} amount={elem.amount} date={elem.date} />
-        ))}
+        {props.items
+          .filter((elem) => elem.date.getFullYear() === parseInt(filterYear))
+          .map((elem) => (
+            <ExpenseItem
+              key={elem.id}
+              title={elem.title}
+              amount={elem.amount}
+              date={elem.date}
+            />
+          ))}
       </Card>
     </div>
   );
