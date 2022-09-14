@@ -12,6 +12,10 @@ function Expenses(props) {
     setFilterYear(selectedYear);
   };
 
+  const filteredExpenses = props.items.filter(expenses => {
+    return expenses.date.getFullYear() === parseInt(filterYear);
+  })
+
   return (
     <div>
       <Card className='expenses'>
@@ -19,8 +23,9 @@ function Expenses(props) {
           selected={filterYear}
           onChangeDropdown={filterChangeHandler}
         />
-        {props.items
-          .filter((elem) => elem.date.getFullYear() === parseInt(filterYear))
+        {filteredExpenses
+          // props.items
+          // .filter((elem) => elem.date.getFullYear() === parseInt(filterYear)) <---myAnswer
           .map((elem) => (
             <ExpenseItem
               key={elem.id}
