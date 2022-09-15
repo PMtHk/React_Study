@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import './ExpenseForm.css';
 
 const ExpenseForm = (props) => {
+  const [inputStatus, setInputStatus] = useState(false);
+
   // const [title, setTitle] = new useState('');
   // const [amount, setAmount] = new useState('');
   // const [date, setDate] = new useState('');
@@ -90,46 +92,64 @@ const ExpenseForm = (props) => {
     });
   };
 
+  const toggleStatusHandler = () => {
+    setInputStatus(prevState => {return !prevState});
+  };
+
+  let inputSection = inputStatus ? (
+    <div className='new-expense__controls'>
+      <div className='new-expense__control'>
+        <label>Title</label>
+        <input
+          type='text'
+          value={userInput.title} // 2-way binding
+          onChange={titleChangeHandler}
+        />
+      </div>
+      <div className='new-expense__control'>
+        <label>Amount</label>
+        <input
+          type='number'
+          value={userInput.amount}
+          min='0.01'
+          step='0.01'
+          onChange={amountChangeHandler}
+        />
+      </div>
+      <div className='new-expense__control'>
+        <label>Date</label>
+        <input
+          type='date'
+          value={userInput.date}
+          min='2022-01-01'
+          max='2024-12-31'
+          onChange={dateChangeHandler}
+        />
+      </div>
+    </div>
+  ) : (
+    <div className='new-expense__actions'>
+      <button onClick={toggleStatusHandler}>Add Expense</button>
+    </div>
+  );
+
+  let buttonSection = inputStatus ? (
+    <div className='new-expense__actions'>
+      <button onClick={toggleStatusHandler}>Cancel</button>
+      <button type='submit'>Add Expense</button>
+    </div>
+  ) : (
+    <div></div>
+  );
+
   return (
     <form onSubmit={submitHandler}>
-      <div className='new-expense__controls'>
-        <div className='new-expense__control'>
-          <label>Title</label>
-          <input
-            type='text'
-            value={userInput.title} // 2-way binding
-            onChange={titleChangeHandler}
-          />
-        </div>
-        <div className='new-expense__control'>
-          <label>Amount</label>
-          <input
-            type='number'
-            value={userInput.amount}
-            min='0.01'
-            step='0.01'
-            onChange={amountChangeHandler}
-          />
-        </div>
-        <div className='new-expense__control'>
-          <label>Date</label>
-          <input
-            type='date'
-            value={userInput.date}
-            min='2022-01-01'
-            max='2024-12-31'
-            onChange={dateChangeHandler}
-          />
-        </div>
-      </div>
-
+      {inputSection}
       {/* <h1>{userInput.title}</h1>
       <h1>{userInput.amount}</h1>
       <h1>{userInput.date}</h1> */}
 
-      <div className='new-expense__actions'>
-        <button type='submit'>Add Expense</button>
-      </div>
+      {buttonSection}
     </form>
   );
 };
