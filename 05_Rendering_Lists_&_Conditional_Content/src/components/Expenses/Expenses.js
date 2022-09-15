@@ -12,9 +12,22 @@ function Expenses(props) {
     setFilterYear(selectedYear);
   };
 
-  const filteredExpenses = props.items.filter(expenses => {
+  const filteredExpenses = props.items.filter((expenses) => {
     return expenses.date.getFullYear() === parseInt(filterYear);
-  })
+  });
+
+  let expensesContent = <p>No Expenses found.</p>;
+
+  if (filteredExpenses.length > 0) {
+    expensesContent = filteredExpenses.map((elem) => (
+      <ExpenseItem
+        key={elem.id}
+        title={elem.title}
+        amount={elem.amount}
+        date={elem.date}
+      />
+    ));
+  }
 
   return (
     <div>
@@ -23,17 +36,9 @@ function Expenses(props) {
           selected={filterYear}
           onChangeDropdown={filterChangeHandler}
         />
-        {filteredExpenses
-          // props.items
-          // .filter((elem) => elem.date.getFullYear() === parseInt(filterYear)) <---myAnswer
-          .map((elem) => (
-            <ExpenseItem
-              key={elem.id}
-              title={elem.title}
-              amount={elem.amount}
-              date={elem.date}
-            />
-          ))}
+        {/* // props.items */}
+        {/* // .filter((elem) => elem.date.getFullYear() === parseInt(filterYear)) <---myAnswer */}
+      {expensesContent}
       </Card>
     </div>
   );
