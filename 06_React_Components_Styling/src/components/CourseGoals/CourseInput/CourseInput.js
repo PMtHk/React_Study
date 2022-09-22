@@ -39,7 +39,7 @@ const CourseInput = (props) => {
     if (event.target.value.trim().length > 0) {
       setIsValid(true);
     }
-    setEnteredValue(event.target.value);
+    setEnteredValue(event.target.value);r
   };
 
   const formSubmitHandler = (event) => {
