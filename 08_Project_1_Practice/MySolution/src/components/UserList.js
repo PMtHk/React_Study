@@ -2,7 +2,6 @@ import React from 'react';
 import User from './User';
 
 const UserList = (props) => {
-  console.log(props);
   return (
     <ul>
       {props.items.map((aUser) => (
