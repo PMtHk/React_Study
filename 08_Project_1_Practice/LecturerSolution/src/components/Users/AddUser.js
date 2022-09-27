@@ -12,7 +12,21 @@ const AddUser = (props) => {
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    // console.log(enteredUsername, enteredAge)
+
+    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      // 두 input 중 하나라도 비어있으면 동작 하지 않도록 함.
+      return;
+    }
+
+    if (parseInt(enteredAge) < 1) {
+      // 입력된 나이가 1보다 작다면 동작 하지 않도록 함.
+      return;
+    }
+
+
+    console.log(enteredUsername, enteredAge);
+    setEnteredUsername('');
+    setEnteredAge('');
   };
 
   const usernameChangeHandler = (event) => {
@@ -30,9 +44,19 @@ const AddUser = (props) => {
       <form onSubmit={addUserHandler}>
         <label htmlFor='username'>Username</label>
         {/* htmlFor 는 for의 속성을 할당하는 props 이름 ... for 는 js예약어라 사용할 수 없음 */}
-        <input id='username' type='text' onChange={usernameChangeHandler}/>
+        <input
+          id='username'
+          type='text'
+          value={enteredUsername}
+          onChange={usernameChangeHandler}
+        />
         <label htmlFor='age'>Age (Years)</label>
-        <input id='age' type='number' onChange={ageChangeHandler}/>
+        <input
+          id='age'
+          type='number'
+          value={enteredAge}
+          onChange={ageChangeHandler}
+        />
         <Button type='submit'>AddUser</Button>
       </form>
     </Card>

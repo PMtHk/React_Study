@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // css-module
 import classes from './Button.module.css';
@@ -9,7 +9,9 @@ const Button = (props) => {
       className={classes.button}
       type={props.type || 'button'}
       onClick={props.onClick}
-    >{props.children}</button>
+    >
+      {props.children}
+    </button>
   );
 };
 
