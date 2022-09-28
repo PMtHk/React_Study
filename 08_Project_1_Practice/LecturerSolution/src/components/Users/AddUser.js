@@ -23,8 +23,8 @@ const AddUser = (props) => {
       return;
     }
 
-
-    console.log(enteredUsername, enteredAge);
+    //adding users on App.js lists
+    props.onAddUser(enteredUsername, enteredAge);
     setEnteredUsername('');
     setEnteredAge('');
   };
