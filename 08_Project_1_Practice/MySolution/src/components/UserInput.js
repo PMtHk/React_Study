@@ -33,7 +33,7 @@ const UserInput = (props) => {
           type='number'
           value={age}
           min='0'
-          max='99'
+          max='120'
           step='1'
           onChange={ageInputHandler}
         />
