@@ -5,6 +5,7 @@ import Button from '../UI/Button';
 
 //css-module
 import classes from './AddUser.module.css';
+import ErrorModal from '../UI/ErrorModal';
 
 const AddUser = (props) => {
   const [enteredUsername, setEnteredUsername] = useState('');
@@ -38,28 +39,35 @@ const AddUser = (props) => {
   };
 
   return (
-    // css-module 의 경우 사용자 지정 컴포넌트의 경우 그 안에서는 props 를 통해서만 동작한다.
-    // 따라서, 상위 컴포넌트(Card.js)에서 className 속성으로 받아들여서 처리할 수 있도록 해아한다.
-    <Card className={classes.input}>
-      <form onSubmit={addUserHandler}>
-        <label htmlFor='username'>Username</label>
-        {/* htmlFor 는 for의 속성을 할당하는 props 이름 ... for 는 js예약어라 사용할 수 없음 */}
-        <input
-          id='username'
-          type='text'
-          value={enteredUsername}
-          onChange={usernameChangeHandler}
-        />
-        <label htmlFor='age'>Age (Years)</label>
-        <input
-          id='age'
-          type='number'
-          value={enteredAge}
-          onChange={ageChangeHandler}
-        />
-        <Button type='submit'>AddUser</Button>
-      </form>
-    </Card>
+    // Modal이 논리적으로 컴포넌트 트리에서 가능한 한 높은 위치 (App.js) 에 위치해야한다는 주장도 있고
+    // AddUser 가 트기거가 되니, AddUser에 위치해야 한다는 주장도 있다.
+    // 하나를 적절한 논리에 맞게 선택하고 사용하자.
+    <div>
+      <ErrorModal title="An Error Occured!" message="Something went wrong!"/>
+      {/* // css-module 의 경우 사용자 지정 컴포넌트의 경우 그 안에서는 props 를
+      통해서만 동작한다. // 따라서, 상위 컴포넌트(Card.js)에서 className
+      속성으로 받아들여서 처리할 수 있도록 해아한다. */}
+      <Card className={classes.input}>
+        <form onSubmit={addUserHandler}>
+          <label htmlFor='username'>Username</label>
+          {/* htmlFor 는 for의 속성을 할당하는 props 이름 ... for 는 js예약어라 사용할 수 없음 */}
+          <input
+            id='username'
+            type='text'
+            value={enteredUsername}
+            onChange={usernameChangeHandler}
+          />
+          <label htmlFor='age'>Age (Years)</label>
+          <input
+            id='age'
+            type='number'
+            value={enteredAge}
+            onChange={ageChangeHandler}
+          />
+          <Button type='submit'>AddUser</Button>
+        </form>
+      </Card>
+    </div>
   );
 };
 

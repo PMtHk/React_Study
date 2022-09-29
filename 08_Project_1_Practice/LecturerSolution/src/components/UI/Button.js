@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-// css-module
+//css-module
 import classes from './Button.module.css';
 
 const Button = (props) => {
@@ -16,3 +16,4 @@ const Button = (props) => {
 };
 
 export default Button;
+
