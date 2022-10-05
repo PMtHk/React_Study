@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 
 import Card from '../UI/Card';
 import Button from '../UI/Button';
+import Wrapper from '../Helpers/Wrapper';
+import ErrorModal from '../UI/ErrorModal';
 
 //css-module
 import classes from './AddUser.module.css';
-import ErrorModal from '../UI/ErrorModal';
 
 const AddUser = (props) => {
   const [enteredUsername, setEnteredUsername] = useState('');
@@ -57,7 +58,7 @@ const AddUser = (props) => {
     // Modal이 논리적으로 컴포넌트 트리에서 가능한 한 높은 위치 (App.js) 에 위치해야한다는 주장도 있고
     // AddUser 가 트기거가 되니, AddUser에 위치해야 한다는 주장도 있다.
     // 하나를 적절한 논리에 맞게 선택하고 사용하자.
-    <div>
+    <Wrapper>
       {error && (
         <ErrorModal title={error.title} message={error.message} onConfirm={errorHandler}/>
       )}
@@ -84,7 +85,7 @@ const AddUser = (props) => {
           <Button type='submit'>AddUser</Button>
         </form>
       </Card>
-    </div>
+    </Wrapper>
   );
 };
 
