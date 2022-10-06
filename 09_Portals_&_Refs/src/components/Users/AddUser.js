@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Card from '../UI/Card';
 import Button from '../UI/Button';
-import Wrapper from '../Helpers/Wrapper';
 import ErrorModal from '../UI/ErrorModal';
+import Wrapper from '../Helpers/Wrapper';
 
 //css-module
 import classes from './AddUser.module.css';
 
 const AddUser = (props) => {
-  const [enteredUsername, setEnteredUsername] = useState('');
-  const [enteredAge, setEnteredAge] = useState('');
 
-  // state for modal
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
+
+  // state for ErrorModal
   const [error, setError] = useState();
 
   const addUserHandler = (event) => {
     event.preventDefault();
 
-    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+    const enteredName = nameInputRef.current.value;
+    const enteredUserAge = ageInputRef.current.value;
+
+    if (enteredName.trim().length === 0 || enteredUserAge.trim().length === 0) {
       setError({
         title: 'Invalid Input',
         message: 'Please enter a valid name and age (non-empty values).',
@@ -27,7 +31,7 @@ const AddUser = (props) => {
       return;
     }
 
-    if (parseInt(enteredAge) < 1) {
+    if (parseInt(enteredUserAge) < 1) {
       setError({
         title: 'Invalid Age',
         message: 'Please enter a valid age (age must be greater than 0).',
@@ -37,17 +41,16 @@ const AddUser = (props) => {
     }
 
     //adding users on App.js lists
-    props.onAddUser(enteredUsername, enteredAge);
-    setEnteredUsername('');
-    setEnteredAge('');
-  };
+    props.onAddUser(enteredName, enteredUserAge);
 
-  const usernameChangeHandler = (event) => {
-    setEnteredUsername(event.target.value);
-  };
 
-  const ageChangeHandler = (event) => {
-    setEnteredAge(event.target.value);
+    nameInputRef.current.value = '';
+    ageInputRef.current.value = '';
+    // 위와 같이 초기화 하는 방법은 흔히 쓰이지 않는다.
+    // DOM을 조작하기 위해 ref를 사용하는 방식은 거의 사용되지 않는다.
+
+    // 값만 읽는 상황이라면 ref 를 사용하는 방식이 더 좋다.
+    // 개발자가 상황에 맞는 방식을 이용하면 된다.
   };
 
   const errorHandler =() =>{
@@ -69,18 +72,23 @@ const AddUser = (props) => {
         <form onSubmit={addUserHandler}>
           <label htmlFor='username'>Username</label>
           {/* htmlFor 는 for의 속성을 할당하는 props 이름 ... for 는 js예약어라 사용할 수 없음 */}
+
+          {/* 아래와 같이 ref로 값에 접근하는 경우, 제어되지 않은 컴포넌트 (uncontrolled components) 라 한다. 
+            내부 state이기 때문에 이 내부 값들은 리액트에 의해 제어되지 않는다. */}
           <input
             id='username'
             type='text'
-            value={enteredUsername}
-            onChange={usernameChangeHandler}
+            // value={enteredUsername}
+            // onChange={usernameChangeHandler}
+            ref={nameInputRef}
           />
           <label htmlFor='age'>Age (Years)</label>
           <input
             id='age'
             type='number'
-            value={enteredAge}
-            onChange={ageChangeHandler}
+            // value={enteredAge}
+            // onChange={ageChangeHandler}
+            ref={ageInputRef}
           />
           <Button type='submit'>AddUser</Button>
         </form>
