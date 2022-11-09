@@ -1,29 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
+const emailReducer = (state, action) => {
+  if (action.type === 'USER_INPUT_EMAIL') {
+    return { value: action.val, isValid: action.val.includes('@') };
+  }
+  if (action.type === 'INPUT_BLUR') {
+    return { value: state.value, isValid: state.value.includes('@') };
+  }
+  return { value: '', isValid: false };
+};
+
+const passwordReducer = (state, action) => {
+  if (action.type === 'USER_INPUT_PW') {
+    return { value: action.val, isValid: action.val.trim().length > 6 };
+  }
+  if (action.type === 'INPUT_BLUR') {
+    return { value: state.value, isValid: state.value.trim().length > 6 };
+  }
+  return { value: '', isValid: false };
+};
+
 const Login = (props) => {
-  const [enteredEmail, setEnteredEmail] = useState('');
-  const [emailIsValid, setEmailIsValid] = useState();
-  const [enteredPassword, setEnteredPassword] = useState('');
-  const [passwordIsValid, setPasswordIsValid] = useState();
-  const [formIsValid, setFormIsValid] = useState(false);
+  // const [enteredEmail, setEnteredEmail] = useState('');
+  // const [emailIsValid, setEmailIsValid] = useState();
+  // const [enteredPassword, setEnteredPassword] = useState('');
+  // const [passwordIsValid, setPasswordIsValid] = useState();
+  const [formIsValid, setFormIsValid] = useState(true);
 
-  useEffect(() => {
-    console.log('EFFECT RUNNING');
+  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+    value: '',
+    isValid: null,
+  });
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
+    value: '',
+    isValid: null,
+  });
 
-    return () => {
-      console.log('EFFECT CLEANUP');
-    };
-  }, []);
+  // 보통의 경우 useReducer 보다 useState가 권장된다.
+
+  // useEffect(() => {
+  //   console.log('EFFECT RUNNING');
+
+  //   return () => {
+  //     console.log('EFFECT CLEANUP');
+  //   };
+  // }, []);
+
+
+  // -------------------------------------------------------
+  // 유효성 확인에 필요한 것은 value 값이 아니라 isValid 의 값이기 때문에
+  // 아래와 같이 객체 분해를 통해 원하는 값만 가져올 수도 있다.
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
 
   useEffect(() => {
     const identifier = setTimeout(() => {
       console.log('CHECKING FORM VALIDITY!');
       setFormIsValid(
-        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+        emailIsValid && passwordIsValid
       );
     }, 500); // debouncing : 타이핑 일시정지 되었을 때 검사하도록 함.
 
@@ -34,27 +72,40 @@ const Login = (props) => {
       console.log('CLEANUP!');
       clearTimeout(identifier);
     };
-  }, [setFormIsValid, enteredEmail, enteredPassword]);
+  }, [emailIsValid, passwordIsValid]);
 
   const emailChangeHandler = (event) => {
-    setEnteredEmail(event.target.value);
+    dispatchEmail({ type: 'USER_INPUT_EMAIL', val: event.target.value });
+
+    setFormIsValid(
+      event.target.value.includes('@') && passwordState.isValid
+    ); 
   };
 
+  // 기존과 같이 하나의 state업데이트를 위해 두개의 다른 state에 의존하는 경우
+  // 리액트가 state 업데이트를 스케쥴링 하는 방식으로 인해
+  // 문제가 발생할 가능성이 있다.
+
   const passwordChangeHandler = (event) => {
-    setEnteredPassword(event.target.value);
+    dispatchPassword({ type: 'USER_INPUT_PW', val: event.target.value });
+
+    setFormIsValid(emailState.isValid && event.target.value.trim().length > 6); 
   };
 
   const validateEmailHandler = () => {
-    setEmailIsValid(enteredEmail.includes('@'));
+    // setEmailIsValid(emailState.isValid); // 하나의 state에서 서로 다른 state에 대해 메소드를 호출했다. -> 함수 폼 사용규칙 위반.
+    dispatchEmail({ type: 'INPUT_BLUR' });
   };
 
   const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+    dispatchPassword(passwordState.isValid); // 하나의 state에서 서로 다른 state에 대해 메소드를 호출했다. -> 함수 폼 사용규칙 위반.
   };
+
+  // const [state, dispatchFn] = useReducer(reducerFn, initialState, initFn); -> useReducer 기본 폼.
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(enteredEmail, enteredPassword);
+    props.onLogin(emailState.value, passwordState.value);
   };
 
   return (
@@ -62,28 +113,28 @@ const Login = (props) => {
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
-            emailIsValid === false ? classes.invalid : ''
+            emailState.isValid === false ? classes.invalid : ''
           }`}
         >
           <label htmlFor='email'>E-Mail</label>
           <input
             type='email'
             id='email'
-            value={enteredEmail}
+            value={emailState.value}
             onChange={emailChangeHandler}
             onBlur={validateEmailHandler}
           />
         </div>
         <div
           className={`${classes.control} ${
-            passwordIsValid === false ? classes.invalid : ''
+            passwordState.isValid === false ? classes.invalid : ''
           }`}
         >
           <label htmlFor='password'>Password</label>
           <input
             type='password'
             id='password'
-            value={enteredPassword}
+            value={passwordState.value}
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
