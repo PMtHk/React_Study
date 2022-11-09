@@ -12,14 +12,26 @@ const Login = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
 
   useEffect(() => {
+    console.log('EFFECT RUNNING');
+
+    return () => {
+      console.log('EFFECT CLEANUP');
+    };
+  }, []);
+
+  useEffect(() => {
     const identifier = setTimeout(() => {
+      console.log('CHECKING FORM VALIDITY!');
       setFormIsValid(
         enteredEmail.includes('@') && enteredPassword.trim().length > 6
       );
-    }, 500);
+    }, 500); // debouncing : 타이핑 일시정지 되었을 때 검사하도록 함.
 
     return () => {
       // cleanup function
+      // useEffect 가 내부 함수를 실행되기 전에 클린업 함수가 동작하게 된다.
+      // 해당 경우, 따라서, 이전의 모든 타이머를 없애고, 마지막 하나의 타이머만 남겨두도록 한다.
+      console.log('CLEANUP!');
       clearTimeout(identifier);
     };
   }, [setFormIsValid, enteredEmail, enteredPassword]);
